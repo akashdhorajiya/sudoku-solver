@@ -1,6 +1,8 @@
 package com.akash.sudoku.datastructure;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Cell implements ISudokuPart{
 	
@@ -8,7 +10,7 @@ public class Cell implements ISudokuPart{
 	
 	private boolean filled;
 	
-	private List<Integer> possibleValues;
+	private List<Number> possibleValues;
 
 	public int getValue() {
 		return value;
@@ -26,12 +28,18 @@ public class Cell implements ISudokuPart{
 		this.filled = filled;
 	}
 
-	public List<Integer> getPossibleValues() {
+	public List<Number> getPossibleValues() {
 		return possibleValues;
 	}
 
-	public void setPossibleValues(List<Integer> possibleValues) {
+	public void setPossibleValues(List<Number> possibleValues) {
 		this.possibleValues = possibleValues;
+		Optional<Number> value = possibleValues.stream().filter(number -> number.getProbability() == 100).findFirst();
+		if(value.isPresent()) {
+			this.value = value.get().getValue();
+			this.filled = true;
+			this.possibleValues = new ArrayList<>();
+		}
 	}
 	
 	@Override
