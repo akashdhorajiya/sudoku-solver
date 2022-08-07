@@ -24,7 +24,7 @@ public class SubSquare implements ISudokuCollectionPart {
 	}
 
 	@Override
-	public List<Integer> missingNumbers() {
+	public List<Integer> missingNumbers(int size) {
 		// TODO Auto-generated method stub
 		return null;
 	}

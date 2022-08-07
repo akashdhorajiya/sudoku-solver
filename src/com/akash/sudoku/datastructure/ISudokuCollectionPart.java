@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface ISudokuCollectionPart extends ISudokuPart{
 
-	List<Integer> missingNumbers();
+	List<Integer> missingNumbers(int size);
 }
