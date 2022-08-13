@@ -1,8 +1,8 @@
 package com.akash.sudoku.datastructure;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 public class Cell implements ISudokuPart{
 	
@@ -10,7 +10,16 @@ public class Cell implements ISudokuPart{
 	
 	private boolean filled;
 	
-	private List<Number> possibleValues;
+	private int maxPossibleNumber;
+	
+	private Set<SudokuNumber> possibleValues;
+	
+	public Cell(int value, int maxPossibleNumber) {
+		this.value = value;
+		this.filled = value != 0;
+		this.maxPossibleNumber = maxPossibleNumber;
+		possibleValues = new HashSet<>();
+	}
 
 	public int getValue() {
 		return value;
@@ -18,33 +27,49 @@ public class Cell implements ISudokuPart{
 
 	public void setValue(int value) {
 		this.value = value;
+		this.filled = true;
+		this.possibleValues = new HashSet<>();
 	}
 
 	public boolean isFilled() {
 		return filled;
 	}
 
-	public void setFilled(boolean filled) {
-		this.filled = filled;
-	}
-
-	public List<Number> getPossibleValues() {
+	public Set<SudokuNumber> getPossibleValues() {
 		return possibleValues;
 	}
 
-	public void setPossibleValues(List<Number> possibleValues) {
+	public void setPossibleValues(Set<SudokuNumber> possibleValues) {
 		this.possibleValues = possibleValues;
-		Optional<Number> value = possibleValues.stream().filter(number -> number.getProbability() == 100).findFirst();
+		Optional<SudokuNumber> value = possibleValues.stream().filter(number -> number.getProbability() == 1.0).findFirst();
 		if(value.isPresent()) {
-			this.value = value.get().getValue();
-			this.filled = true;
-			this.possibleValues = new ArrayList<>();
+			setValue(value.get().getValue());
 		}
+	}
+	
+	public boolean isNumberInPossibleValues(int number) {
+		if(possibleValues.isEmpty()) {
+			return true;
+		}
+		return possibleValues.stream().anyMatch(value -> value.getValue()==number);
 	}
 	
 	@Override
 	public int getEntropy() {
-		return possibleValues.size();
+		if(filled) {
+			return 0;
+		} 
+		return possibleValues.isEmpty() ? maxPossibleNumber : possibleValues.size();
+	}
+
+	@Override
+	public void print() {
+		System.out.println("Possible numbers :");
+		possibleValues.forEach(possibleValue -> {
+			System.out.println(possibleValue.getValue() + " : R-" + possibleValue.getRowProbability() 
+			+ " ; C-" + possibleValue.getColumnProbability() + " ; S-" + possibleValue.getSubSquareProbability()
+			+ " ; T-" + possibleValue.getProbability());
+		});
 	}
 
 }
